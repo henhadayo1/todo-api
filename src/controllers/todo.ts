@@ -7,14 +7,14 @@ export const createTodo: RequestHandler = async (req, res, next) => {
   const text = (req.body as { text: string }).text;
   try {
     const newTodo = await Todo.create({ text });
-    res.status(201).send({ message: "New todo has created!", newTodo });
+    res.status(201).send({ text: newTodo.text, _id: newTodo._id });
   } catch (error: unknown) {
     next(error);
   }
 };
 
 export const getTodos: RequestHandler = async (req, res, next) => {
-  const todos = await Todo.find({}, "text");
+  const todos = await Todo.find({}, "text createdAt").sort({ createdAt: -1 });
   res.send(todos);
 };
 
