@@ -5,9 +5,12 @@ import { Todo } from "../models/todo";
 
 export const createTodo: RequestHandler = async (req, res, next) => {
   const text = (req.body as { text: string }).text;
-  const newTodo = new Todo({ text });
-  await newTodo.save();
-  res.status(201).send({ message: "New todo has created!", newTodo });
+  try {
+    const newTodo = await Todo.create({ text });
+    res.status(201).send({ message: "New todo has created!", newTodo });
+  } catch (error: unknown) {
+    next(error);
+  }
 };
 
 export const getTodos: RequestHandler = async (req, res, next) => {
