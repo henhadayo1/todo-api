@@ -1,8 +1,4 @@
-import { Schema, model } from "mongoose";
-
-export class TodoClass {
-  constructor(public _id: string, public text: string) {}
-}
+import { ObjectId, Schema, model } from "mongoose";
 
 export interface ITodo {
   text: string;

@@ -1,7 +1,5 @@
 import { RequestHandler } from "express";
-import { Todo, TodoClass } from "../models/todo";
-
-const TODOS: TodoClass[] = [];
+import { Todo } from "../models/todo";
 
 //CRUD
 
@@ -12,42 +10,48 @@ export const createTodo: RequestHandler = async (req, res, next) => {
   res.status(201).send({ message: "New todo has created!", newTodo });
 };
 
-export const getTodos: RequestHandler = (req, res, next) => {
-  res.send(TODOS);
+export const getTodos: RequestHandler = async (req, res, next) => {
+  const todos = await Todo.find({}, "text");
+  res.send(todos);
 };
 
-export const getTodo: RequestHandler = (req, res, next) => {
+export const getTodo: RequestHandler = async (req, res, next) => {
   const id = req.params.id;
-  const todo = getTodoById(id);
-  if (!todo) {
-    throw new Error(`Can not find todo with id: ${id}`);
+  try {
+    const todo = await Todo.findById(id, "text").exec();
+    res.send(todo);
+  } catch (error: unknown) {
+    next(error);
   }
-  res.send(todo);
 };
 
-export const updateTodo: RequestHandler = (req, res, next) => {
+export const updateTodo: RequestHandler = async (req, res, next) => {
   const id = req.params.id;
   const text = (req.body as { text: string }).text;
-  const index = TODOS.findIndex((todo) => todo._id === id);
-  if (index < 0) {
-    throw new Error(`Can not find todo with id: ${id}`);
+
+  try {
+    const todo = await Todo.findById(id, "text").exec();
+    if (!todo) {
+      throw new Error("Todo not found");
+    }
+    todo.text = text;
+    await todo.save();
+    res.status(201).send(todo);
+  } catch (error: unknown) {
+    next(error);
   }
-  TODOS[index] = new TodoClass(id, text);
-  res
-    .status(201)
-    .send({ message: "Todo has updated", updatedTodo: TODOS[index] });
 };
 
-export const deleteTodo: RequestHandler = (req, res, next) => {
+export const deleteTodo: RequestHandler = async (req, res, next) => {
   const id = (req.params as { id: string }).id;
-  const index = TODOS.findIndex((todo) => todo._id === id);
-  if (index < 0) {
-    throw new Error(`Can not find todo with id: ${id}`);
-  }
-  TODOS.splice(index, 1);
-  res.send({ message: "Todo has deleted" });
-};
 
-function getTodoById(id: string) {
-  return TODOS.find((todo) => todo._id === id);
-}
+  try {
+    const todo = await Todo.findByIdAndDelete(id).exec();
+    if (!todo) {
+      throw new Error("Todo not found");
+    }
+    res.send(todo);
+  } catch (error: unknown) {
+    next(error);
+  }
+};
