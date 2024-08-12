@@ -36,5 +36,3 @@ async function run() {
 }
 
 console.log("feature b");
-
-console.log("feature a 2");
