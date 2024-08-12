@@ -5,20 +5,6 @@ import "dotenv/config";
 import cors, { CorsOptions } from "cors";
 import todosRouter from "./routes/todo";
 
-// const whiteList = ["http://localhost:5173"];
-
-// const corsOptions: CorsOptions = {
-//   origin: function (origin, callback) {
-//     console.log("origin::", origin);
-//     if (whiteList.includes(origin)) {
-//       callback(null, true);
-//     } else {
-//       console.log(`Origin: ${origin} is not allowed`);
-//       callback(new Error("Not allowed by CORS"));
-//     }
-//   },
-// };
-
 // Allow requests from all origins
 const corsOptions: CorsOptions = {
   origin: "*",
