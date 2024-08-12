@@ -35,7 +35,5 @@ async function run() {
   console.log("DB connected!");
 }
 
-console.log("feature b");
-
 console.log("feature a");
 console.log("feature a 2");
